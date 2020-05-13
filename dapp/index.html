@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>CoinFlip</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+    <script type="text/javascript" src="./web3.min.js"></script>
+    <script type="text/javascript" src="./abi.js"></script>
+    <script type="text/javascript" src="./main.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="CoinFlip.css">
+  </head>
+  <body>
+  <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-4">CoinFlip</h1>
+        <p class="lead">Flip and win! </p>
+        <div style="color:#4761E1">Available for winning: <span id="balance_output"></span></div>
+      </div>
+   </div>
+   <div>
+     <button type="button" id="fund_button" class="btn btn-primary">Fund</button>
+  </div>
+   <div id="coin-flip-cont">
+        <div id="coin">
+          <div class="front"><img style="margin-top:5px" src="eth.png" width="200" height="200"></div>
+          <div class="back"><img style="margin-top:5px" src="eos.png" width="200" height="200"></div>
+        </div>
+   </div>
+    <div class="container">
+      <div>
+        <div>
+          <div>
+            <div id="betOnContainer">
+            Bet on: <span id="betOn_ouput"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3 center-block">
+          <input type="number" class="form-control" id="amount_input" placeholder="Place a bet">
+        </div>
+        <div id="resultContainer">
+          Result: <span id="betResult_output" ></span>
+        </div>
+        <div>
+          <button type="button" id="head_button" class="btn btn-primary">Head</button>
+          <button type="button" id="tail_button" class="btn btn-primary black-background">Tail</button>
+      </div>
+      </div>
+    </div>
+  </body>
+</html>
