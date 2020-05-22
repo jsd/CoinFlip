@@ -6,7 +6,6 @@ var betSelected;
 var playerAddress;
 
 $(document).ready(()=> {
-  console.log("V88");
     window.ethereum.enable().then((accounts)=>{
         contractInstance = new web3.eth.Contract(abi, "0xE7558Af1B3F125BCB1e7c114788c97ddC6FF0CD7", {from: accounts[0]});
 
@@ -18,7 +17,6 @@ $(document).ready(()=> {
                 hideEllipsis();
                 getContractBalance();
                 getPlayerBalance();
-                //console.log("account address: " + playerAddress);
         });
 });
 
@@ -62,9 +60,7 @@ $(document).ready(()=> {
                 toBlock: 'latest'
               }, function(error, event){ console.log(event); })
               .on('data', function(event){
-
-                  console.log("betPlaced data => " + JSON.stringify(event));
-
+                  //console.log("betPlaced data => " + JSON.stringify(event));
                   flipResult =  event.returnValues.flipResult;
                   latestNumber = event.returnValues.latestNumber;
                   spinCoin(latestNumber, flipResult);
@@ -77,7 +73,7 @@ $(document).ready(()=> {
               .on('error', console.error);
         }).then(()=>{
 
-        }).catch(e=> {alert(JSON.stringify(e))});
+        }).catch(e=> {console.log("placeBet error => " + e)});
   }
 
   function displayResult(betResult){
@@ -173,7 +169,7 @@ $(document).ready(()=> {
     contractInstance.methods.payoutPlayer(playerAddress).send().then((result)=>{
       getPlayerBalance();
       getContractBalance();
-    }).catch(e=> {alert("payout exception: " +e)});
+    }).catch(e=> {console.log("payout exception: " +JSON.stringify(e))});
   }
 
   function showBetResult() {
