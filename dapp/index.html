@@ -20,24 +20,27 @@
       <div class="container">
         <h1 class="display-4">CoinFlip</h1>
         <p class="lead">Flip and win! </p>
-        <div style="color:#4761E1">Available for winning: <span id="balance_output"></span></div>
+        <div id="contractBalanceContainer" style="color:#4761E1">
+          <div>Available for winning:</div>
+          <div id="balance_output"></div>
+          <div id="fundContainer">
+            <button type="button" id="fund_button" class="btn btn-primary">Fund</button>
+          </div>
       </div>
-   </div>
-   <div>
-     <button type="button" id="fund_button" class="btn btn-primary">Fund</button>
+      </div>
   </div>
-   <div id="coin-flip-cont">
+  <div id="coin-flip-cont">
         <div id="coin">
           <div class="front"><img style="margin-top:5px" src="eth.png" width="200" height="200"></div>
           <div class="back"><img style="margin-top:5px" src="eos.png" width="200" height="200"></div>
         </div>
    </div>
-    <div class="container">
+   <div class="container">
       <div>
         <div>
           <div>
             <div id="betOnContainer">
-            Bet on: <span id="betOn_ouput"></span>
+            Bet on: <span id="betOn_ouput">Chose a side</span>
             </div>
           </div>
         </div>
@@ -45,13 +48,26 @@
           <input type="text" class="form-control" id="amount_input" placeholder="Place a bet (ether)">
         </div>
         <div id="resultContainer">
-          Result: <span id="betResult_output" ></span>
-                    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+          <div id="resulTextLabel">
+          Result:
+          </div>
+          <div>
+            <span id="betResult_output"></span>
+          </div>
+          <div>
+            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+          </div>
+        </div>
+        <div id="playerBalanceContainter">
+            Your wining balance: <span id="playerBalance_ouput"></span>
         </div>
         <div>
           <button type="button" id="head_button" class="btn btn-primary">Head</button>
           <button type="button" id="tail_button" class="btn btn-primary black-background">Tail</button>
-      </div>
+        </div>
+        <div id="payoutContainter">
+            <button type="button" id="payout_button" class="btn btn-primary black-background">Payout</button>
+        </div>
       </div>
     </div>
   </body>

@@ -1,9 +1,11 @@
 pragma solidity 0.5.12;
 import "./Ownable.sol";
+import "./SafeMath.sol";
 import "./provableAPI.sol";
 
 contract CoinFlip is Ownable, usingProvable {
 
+    using SafeMath for uint256;
 
     uint256 constant NUM_RANDOM_BYTES_REQUESTED = 1;
     uint256 public latestNumber;
@@ -14,16 +16,21 @@ contract CoinFlip is Ownable, usingProvable {
       uint256 betOn;
     }
 
-    event betPlaced(bytes32 indexed queryId, address playerAddress, uint256 betAmount, uint256 betOn, uint256 latestNumber, bool flipResult);
+    event betPlaced(bytes32 indexed queryId, address playerAddress, uint betAmount, uint amountToWin, uint256 betOn, uint256 latestNumber, bool flipResult);
     event logNewProvableQuery(string description);
     event generatedRandomNumber(uint256 randomNumber);
     event logQueryId(bytes32 indexed queryId, address playerAddress);
 
     mapping (bytes32 => Bet) private bets;
+    mapping (address => uint ) private playerBalances;
 
     modifier costs(uint cost){
         require(msg.value >= cost);
         _;
+    }
+
+    constructor () public {
+      provable_setProof(proofType_Ledger);
     }
 
     function placeBet(uint256 betOn) public payable costs(0.05 ether) {
@@ -45,26 +52,48 @@ contract CoinFlip is Ownable, usingProvable {
         require(msg.sender == provable_cbAddress());
 
         latestNumber = uint256(keccak256(abi.encodePacked(_result))) % 2;
-        uint betAmount =   bets[_queryId].betAmount*2;
+        uint betAmount =   bets[_queryId].betAmount;
+        uint amountToWin = SafeMath.mul(betAmount, 2);
         address payable playerAddress = bets[_queryId].playerAddress;
         bool  flipResult = false;
         uint256 betOn =  bets[_queryId].betOn;
 
         if(latestNumber == betOn) {
              flipResult = true;
-             playerAddress.transfer(betAmount);
-
+             addPlayerBalance(playerAddress, amountToWin);
         } else {
             flipResult = false;
         }
 
         emit generatedRandomNumber(latestNumber);
-        emit betPlaced(_queryId, playerAddress, betAmount, betOn, latestNumber, flipResult);
+        emit betPlaced(_queryId, playerAddress, betAmount, amountToWin, betOn, latestNumber, flipResult);
     }
 
-   function getBalance() public view returns(uint){
-       return address(this).balance;
-   }
+    function getBalance() public view returns(uint){
+        return address(this).balance;
+    }
+
+    function addPlayerBalance(address playerAddress, uint amount) public {
+        uint previousBalance = playerBalances[playerAddress];
+        playerBalances[playerAddress] = SafeMath.add(previousBalance, amount);
+    }
+
+    function getPlayerBalance(address playerAddress) public view returns(uint) {
+        uint playerBalance = playerBalances[playerAddress];
+        return  playerBalance;
+    }
+
+    function payoutPlayer(address payable playerAddress) public payable {
+        require(msg.sender == playerAddress);
+        uint playerBalance = getPlayerBalance(playerAddress);
+        uint toTransfer = playerBalance;
+
+        playerBalances[playerAddress] = 0;
+        assert(playerBalances[playerAddress] == 0);
+      
+        playerAddress.transfer(toTransfer);
+        balance -= toTransfer;
+    }
 
    function fundContract() public payable costs(1 ether) {
       balance += msg.value;
@@ -73,6 +102,7 @@ contract CoinFlip is Ownable, usingProvable {
    function close() public onlyOwner {
         msg.sender.transfer(balance);
         balance = 0;
+        assert(balance == 0);
         selfdestruct(msg.sender);
     }
 }

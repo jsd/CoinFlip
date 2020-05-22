@@ -27,11 +27,24 @@ left: calc(50% - 100px);
 }
 
 #resultContainer {
-    margin-bottom: 15px;
+    //margin-bottom: 15px;
     //margin-top:30px;
     //margin-left: 5px;
     display:flex;
     align-items: center;
+}
+
+#resulTextLabel {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+#contractBalanceContainer{
+  display: flex;
+  color:#4761E1;
+  align-items: center;
 }
 
 #tail_button {
@@ -51,6 +64,25 @@ left: calc(50% - 100px);
   border-color:#4761E1;
   width: 100px;
   top: 300px;
+}
+
+#fundContainer {
+  padding-left: 20px;
+}
+
+#payout_button {
+  background-color:#4761E1;
+  border-color:#4761E1;
+  width: 100px;
+  top: 300px;
+}
+
+#payoutContainter {
+  margin-top: 10px;
+}
+
+#playerBalanceContainter {
+  margin-bottom: 20px;
 }
 
 #coin {

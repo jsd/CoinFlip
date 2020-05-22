@@ -3,18 +3,22 @@ var contractInstance;
 const TAIL = 0;
 const HEAD = 1;
 var betSelected;
-
+var playerAddress;
 
 $(document).ready(()=> {
-  console.log("V72");
+  console.log("V88");
     window.ethereum.enable().then((accounts)=>{
-        contractInstance = new web3.eth.Contract(abi, "0x62E37c9Ba584A1426f39418c0768d4808f0096b7", {from: accounts[0]});
+        contractInstance = new web3.eth.Contract(abi, "0xE7558Af1B3F125BCB1e7c114788c97ddC6FF0CD7", {from: accounts[0]});
 
+                playerAddress = web3.currentProvider.selectedAddress;
                 $("#head_button").click(()=>{placeBet(HEAD)});
                 $("#tail_button").click(()=>{placeBet(TAIL)});
                 $("#fund_button").click(fundContractValue);
-                $(".lds-ellipsis").hide();
-                getCurrentBalance();
+                $("#payout_button").click(payoutPlayer);
+                hideEllipsis();
+                getContractBalance();
+                getPlayerBalance();
+                //console.log("account address: " + playerAddress);
         });
 });
 
@@ -24,17 +28,23 @@ $(document).ready(()=> {
     var flipResult;
     var latestNumber;
     var queryId;
+
+    if(betAmount === "" || betAmount == 0 ) {
+      alert("You must enter a valid amount");
+    }
+
     const config = {
-            value: web3.utils.toWei(betAmount, "ether")
+          value: web3.utils.toWei(betAmount, "ether")
     };
 
-    $("#betResult_output").hide();
 
+    hideBetResult();
     displayBetOn(betOn);
+
     contractInstance.methods.placeBet(betOn).send(config)
         .on("transactionHash", (hash) =>{
             console.log("hash => " + hash);
-            $(".lds-ellipsis").show();
+            showEllipsis();
         })
         .on("confirmation", (confirmationNr) => {
             //console.log("confirmationNr => " + confirmationNr);
@@ -44,7 +54,7 @@ $(document).ready(()=> {
             console.log("queryId => " +   receipt.events.logQueryId.returnValues.queryId);
             queryId = receipt.events.logQueryId.returnValues.queryId;
 
-            getCurrentBalance();
+            getContractBalance();
 
             contractInstance.events.betPlaced({
               filter: { queryId: queryId},
@@ -71,14 +81,18 @@ $(document).ready(()=> {
   }
 
   function displayResult(betResult){
-        $("#betResult_output").show();
+        hideEllipsis();
+
       if (betResult) {
+        showBetResult();
         $("#betResult_output").text("You Win").css('color', 'green');
           console.log("You win " + betResult + ", on " + betSelected );
       } else {
+        showBetResult();
           $("#betResult_output").text("You lose").css('color', 'red');
           console.log("You lose " + betResult + ", on " + betSelected);
       }
+      getPlayerBalance();
   }
 
   function displayBetOn(betOn) {
@@ -114,12 +128,12 @@ $(document).ready(()=> {
      }).then(()=> {
        setTimeout(()=>{
           displayResult(betResult);
-          $(".lds-ellipsis").hide();
+          hideEllipsis();
       }, 3000);
      });
   }
 
-  function getCurrentBalance(){
+  function getContractBalance(){
     contractInstance.methods.getBalance().call().then((balance) =>{
         console.log("balance => " + balance);
         displayBalance(balance);
@@ -136,9 +150,44 @@ $(document).ready(()=> {
     }
     try {
       contractInstance.methods.fundContract().send(config).then(()=>{
-          getCurrentBalance();
+          getContractBalance();
       })
     } catch(e) {
      alert(e);
     }
+  }
+
+  function getPlayerBalance(){
+    contractInstance.methods.getPlayerBalance(playerAddress).call().then((balance) =>{
+        displayPlayerBalance(balance);
+        console.log("Player balance => " + balance);
+    });
+  }
+
+  function displayPlayerBalance(value){
+      $("#playerBalance_ouput").text(web3.utils.fromWei(value, "ether") + " eth");
+  }
+
+  function payoutPlayer(){
+
+    contractInstance.methods.payoutPlayer(playerAddress).send().then((result)=>{
+      getPlayerBalance();
+      getContractBalance();
+    }).catch(e=> {alert("payout exception: " +e)});
+  }
+
+  function showBetResult() {
+    $("#betResult_output").show();
+  }
+
+  function hideBetResult() {
+    $("#betResult_output").hide();
+  }
+
+  function showEllipsis() {
+    $(".lds-ellipsis").show();
+  }
+
+  function hideEllipsis() {
+    $(".lds-ellipsis").hide();
   }
