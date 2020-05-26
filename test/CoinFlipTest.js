@@ -28,9 +28,7 @@ contract("CoinFlip", async function(accounts){
 
   it("should withdraw", async ()=> {
         await instance.getBalance({from: accounts[4], value: web3.utils.toWei("1", "ether")});
-        await instance.withdraw(web3.utils.toWei("1", "ether"));
-
-
+        //await instance.withdraw(web3.utils.toWei("1", "ether"));
         //assert(flipCoin == 0 || flipCoin == 1, "flip 0 or 1");      //assert(result === 100);
   });
 

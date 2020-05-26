@@ -6,9 +6,10 @@ var betSelected;
 var playerAddress;
 
 $(document).ready(()=> {
+  console.log("v93")
     window.ethereum.enable().then((accounts)=>{
-        contractInstance = new web3.eth.Contract(abi, "0xE7558Af1B3F125BCB1e7c114788c97ddC6FF0CD7", {from: accounts[0]});
-
+        contractInstance = new web3.eth.Contract(abi, "0x1C4833B0D113AaaA51F54881CeA5Ba7b74BA4475", {from: accounts[0]});
+          console.log("contract Instance", contractInstance  );
                 playerAddress = web3.currentProvider.selectedAddress;
                 $("#head_button").click(()=>{placeBet(HEAD)});
                 $("#tail_button").click(()=>{placeBet(TAIL)});
@@ -34,7 +35,6 @@ $(document).ready(()=> {
     const config = {
           value: web3.utils.toWei(betAmount, "ether")
     };
-
 
     hideBetResult();
     displayBetOn(betOn);
@@ -127,6 +127,14 @@ $(document).ready(()=> {
           hideEllipsis();
       }, 3000);
      });
+  }
+
+  function test(){
+    contractInstance.methods.brokeTheBalance().call().then((balance) =>{
+        console.log("balance hack => " + balance);
+        displayBalance(balance);
+    });
+
   }
 
   function getContractBalance(){

@@ -13,7 +13,7 @@ contract CoinFlip is Ownable, usingProvable {
     struct Bet {
       address payable playerAddress;
       uint betAmount;
-      uint256 betOn;
+      uint betOn;
     }
 
     event betPlaced(bytes32 indexed queryId, address playerAddress, uint betAmount, uint amountToWin, uint256 betOn, uint256 latestNumber, bool flipResult);
@@ -33,7 +33,7 @@ contract CoinFlip is Ownable, usingProvable {
       provable_setProof(proofType_Ledger);
     }
 
-    function placeBet(uint256 betOn) public payable costs(0.05 ether) {
+    function placeBet(uint betOn) public payable costs(0.05 ether) {
 
         uint256 QUERY_EXECUTION_DELAY = 0;
         uint256 GAS_FOR_CALLBACK = 200000;
@@ -53,7 +53,8 @@ contract CoinFlip is Ownable, usingProvable {
 
         latestNumber = uint256(keccak256(abi.encodePacked(_result))) % 2;
         uint betAmount =   bets[_queryId].betAmount;
-        uint amountToWin = SafeMath.mul(betAmount, 2);
+        uint netBetAmount =  SafeMath.sub(betAmount, provable_getPrice("RANDOM"));
+        uint amountToWin = SafeMath.mul(netBetAmount, 2);
         address payable playerAddress = bets[_queryId].playerAddress;
         bool  flipResult = false;
         uint256 betOn =  bets[_queryId].betOn;
@@ -61,8 +62,6 @@ contract CoinFlip is Ownable, usingProvable {
         if(latestNumber == betOn) {
              flipResult = true;
              addPlayerBalance(playerAddress, amountToWin);
-        } else {
-            flipResult = false;
         }
 
         emit generatedRandomNumber(latestNumber);
@@ -73,7 +72,7 @@ contract CoinFlip is Ownable, usingProvable {
         return address(this).balance;
     }
 
-    function addPlayerBalance(address playerAddress, uint amount) public {
+    function addPlayerBalance(address playerAddress, uint amount) private {
         uint previousBalance = playerBalances[playerAddress];
         playerBalances[playerAddress] = SafeMath.add(previousBalance, amount);
     }
@@ -90,13 +89,13 @@ contract CoinFlip is Ownable, usingProvable {
 
         playerBalances[playerAddress] = 0;
         assert(playerBalances[playerAddress] == 0);
-      
+
         playerAddress.transfer(toTransfer);
-        balance -= toTransfer;
+        balance = SafeMath.sub(balance, toTransfer);
     }
 
    function fundContract() public payable costs(1 ether) {
-      balance += msg.value;
+      balance = SafeMath.add(balance, msg.value);
     }
 
    function close() public onlyOwner {
