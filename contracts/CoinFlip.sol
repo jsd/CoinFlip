@@ -16,7 +16,7 @@ contract CoinFlip is Ownable, usingProvable {
       uint betOn;
     }
 
-    event betPlaced(bytes32 indexed queryId, address playerAddress, uint betAmount, uint amountToWin, uint256 betOn, uint256 latestNumber, bool flipResult);
+    event betPlaced(bytes32 indexed queryId, address playerAddress, uint betAmount, uint amountToWin, uint betOn, uint256 latestNumber, bool flipResult);
     event logNewProvableQuery(string description);
     event generatedRandomNumber(uint256 randomNumber);
     event logQueryId(bytes32 indexed queryId, address playerAddress);
@@ -51,7 +51,7 @@ contract CoinFlip is Ownable, usingProvable {
     function __callback( bytes32 _queryId, string memory _result,bytes memory _proof) public {
         require(msg.sender == provable_cbAddress());
 
-        latestNumber = uint256(keccak256(abi.encodePacked(_result))) % 2;
+        latestNumber = SafeMath.div(uint256(keccak256(abi.encodePacked(_result))), 2);
         uint betAmount =   bets[_queryId].betAmount;
         uint netBetAmount =  SafeMath.sub(betAmount, provable_getPrice("RANDOM"));
         uint amountToWin = SafeMath.mul(netBetAmount, 2);
