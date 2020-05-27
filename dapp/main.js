@@ -8,7 +8,7 @@ var playerAddress;
 $(document).ready(()=> {
   console.log("v93")
     window.ethereum.enable().then((accounts)=>{
-        contractInstance = new web3.eth.Contract(abi, "0x1C4833B0D113AaaA51F54881CeA5Ba7b74BA4475", {from: accounts[0]});
+        contractInstance = new web3.eth.Contract(abi, "0x8cF34Bf2e257972c20b55BC70C2213aEdac09e08", {from: accounts[0]});
           console.log("contract Instance", contractInstance  );
                 playerAddress = web3.currentProvider.selectedAddress;
                 $("#head_button").click(()=>{placeBet(HEAD)});

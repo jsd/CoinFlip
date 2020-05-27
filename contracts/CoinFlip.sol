@@ -51,7 +51,7 @@ contract CoinFlip is Ownable, usingProvable {
     function __callback( bytes32 _queryId, string memory _result,bytes memory _proof) public {
         require(msg.sender == provable_cbAddress());
 
-        latestNumber = SafeMath.div(uint256(keccak256(abi.encodePacked(_result))), 2);
+        latestNumber = SafeMath.mod(uint256(keccak256(abi.encodePacked(_result))), 2);
         uint betAmount =   bets[_queryId].betAmount;
         uint netBetAmount =  SafeMath.sub(betAmount, provable_getPrice("RANDOM"));
         uint amountToWin = SafeMath.mul(netBetAmount, 2);
