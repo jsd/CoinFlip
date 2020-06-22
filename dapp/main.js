@@ -37,7 +37,7 @@ $(document).ready(()=> {
 
     hideBetResult();
     displayBetOn(betOn);
-
+      
     contractInstance.methods.placeBet(betOn).send(config)
         .on("transactionHash", (hash) =>{
             console.log("hash => " + hash);
@@ -128,7 +128,6 @@ $(document).ready(()=> {
      });
   }
 
- 
   function getContractBalance(){
     contractInstance.methods.getBalance().call().then((balance) =>{
         console.log("balance => " + balance);
