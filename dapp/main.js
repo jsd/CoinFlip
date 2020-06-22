@@ -128,14 +128,7 @@ $(document).ready(()=> {
      });
   }
 
-  function test(){
-    contractInstance.methods.brokeTheBalance().call().then((balance) =>{
-        console.log("balance hack => " + balance);
-        displayBalance(balance);
-    });
-
-  }
-
+ 
   function getContractBalance(){
     contractInstance.methods.getBalance().call().then((balance) =>{
         console.log("balance => " + balance);
